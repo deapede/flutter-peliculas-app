@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import 'package:peliculasapp/src/models/pelicula_model.dart';
 
@@ -37,18 +38,26 @@ class MovieHorizontal extends StatelessWidget {
   }
 
   Widget _tarjeta(BuildContext context, Pelicula pelicula) {
+    // Solucioón antigua del video
+    // pelicula.uniqueId = '${pelicula.id}-poster';
+    // Solución nueva con clase UniqueKey
+    pelicula.uniqueId = UniqueKey().toString();
+
     final tarjeta = Container(
       margin: EdgeInsets.only(right: 15.0),
       child: Column(children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(20.0),
-          child: FadeInImage(
-            placeholder: AssetImage('assets/img/no-image.jpg'),
-            image: NetworkImage(
-              pelicula.getPosterImg(),
+        Hero(
+          tag: pelicula.uniqueId,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20.0),
+            child: FadeInImage(
+              placeholder: AssetImage('assets/img/no-image.jpg'),
+              image: NetworkImage(
+                pelicula.getPosterImg(),
+              ),
+              fit: BoxFit.cover,
+              height: 140.0,
             ),
-            fit: BoxFit.cover,
-            height: 140.0,
           ),
         ),
         SizedBox(
@@ -64,6 +73,7 @@ class MovieHorizontal extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
+        // timeDilation = 2;
         Navigator.pushNamed(context, 'detalle', arguments: pelicula);
       },
       child: tarjeta,
